@@ -43,12 +43,12 @@ inputs:
           type: array
       - name: config__algorithm__validate
         type:
-        - File
         - 'null'
+        - string
       - name: config__algorithm__validate_regions
         type:
-        - File
         - 'null'
+        - string
       - name: config__algorithm__variant_regions
         type:
         - File
@@ -201,12 +201,12 @@ outputs:
           type: array
       - name: config__algorithm__validate
         type:
-        - File
         - 'null'
+        - string
       - name: config__algorithm__validate_regions
         type:
-        - File
         - 'null'
+        - string
       - name: config__algorithm__variant_regions
         type:
         - File

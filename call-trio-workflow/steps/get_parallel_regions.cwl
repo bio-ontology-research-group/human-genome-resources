@@ -1,43 +1,30 @@
 $namespaces:
-  arv: http://arvados.org/cwl#
   dx: https://www.dnanexus.com/cwl#
 arguments:
 - position: 0
   valueFrom: sentinel_runtime=cores,$(runtime['cores']),ram,$(runtime['ram'])
-- sentinel_parallel=batch-merge
-- sentinel_outputs=vrn_file
-- sentinel_inputs=batch_rec:record,region_block:var,vrn_file_region:var
+- sentinel_parallel=batch-split
+- sentinel_outputs=region_block
+- sentinel_inputs=batch_rec:record
 - run_number=0
 baseCommand:
 - bcbio_nextgen.py
 - runfn
-- concat_batch_variantcalls
+- get_parallel_regions
 - cwl
 class: CommandLineTool
 cwlVersion: v1.0
 hints:
 - class: DockerRequirement
-  dockerImageId: leechuck/bcbio-vc
-  dockerPull: leechuck/bcbio-vc
+  dockerImageId: quay.io/bcbio/bcbio-vc
+  dockerPull: quay.io/bcbio/bcbio-vc
 - class: ResourceRequirement
   coresMin: 1
-  outdirMin: 166927
+  outdirMin: 219156
   ramMin: 4096
-  tmpdirMin: 78344
+  tmpdirMin: 104458
 - class: dx:InputResourceRequirement
-  indirMin: 30209
-- class: SoftwareRequirement
-  packages:
-  - package: bcftools
-    specs:
-    - https://anaconda.org/bioconda/bcftools
-  - package: htslib
-    specs:
-    - https://anaconda.org/bioconda/htslib
-  - package: gatk4
-    specs:
-    - https://anaconda.org/bioconda/gatk4
-- class: arv:APIRequirement
+  indirMin: 30097
 inputs:
 - id: batch_rec
   type:
@@ -80,12 +67,12 @@ inputs:
           type: array
       - name: config__algorithm__validate
         type:
-        - File
         - 'null'
+        - string
       - name: config__algorithm__validate_regions
         type:
-        - File
         - 'null'
+        - string
       - name: config__algorithm__variant_regions
         type:
         - File
@@ -172,25 +159,13 @@ inputs:
       name: batch_rec
       type: record
     type: array
+outputs:
 - id: region_block
   type:
     items:
       items: string
       type: array
     type: array
-- id: vrn_file_region
-  secondaryFiles:
-  - .tbi
-  type:
-    items:
-    - File
-    - 'null'
-    type: array
-outputs:
-- id: vrn_file
-  secondaryFiles:
-  - .tbi
-  type: File
 requirements:
 - class: InlineJavascriptRequirement
 - class: InitialWorkDirRequirement

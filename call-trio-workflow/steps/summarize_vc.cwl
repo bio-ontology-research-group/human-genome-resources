@@ -16,15 +16,15 @@ class: CommandLineTool
 cwlVersion: v1.0
 hints:
 - class: DockerRequirement
-  dockerImageId: leechuck/bcbio-vc
-  dockerPull: leechuck/bcbio-vc
+  dockerImageId: quay.io/bcbio/bcbio-vc
+  dockerPull: quay.io/bcbio/bcbio-vc
 - class: ResourceRequirement
   coresMin: 1
   outdirMin: 219156
   ramMin: 4096
   tmpdirMin: 104458
 - class: dx:InputResourceRequirement
-  indirMin: 5852
+  indirMin: 5740
 inputs:
 - id: vc_rec
   type:
@@ -91,12 +91,12 @@ inputs:
             type: array
         - name: config__algorithm__validate
           type:
-          - File
           - 'null'
+          - string
         - name: config__algorithm__validate_regions
           type:
-          - File
           - 'null'
+          - string
         - name: config__algorithm__variant_regions
           type:
           - File

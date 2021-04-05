@@ -120,18 +120,16 @@ inputs:
     - boolean
     type: array
 - id: config__algorithm__validate
-  secondaryFiles:
-  - .tbi
   type:
     items:
-    - File
     - 'null'
+    - string
     type: array
 - id: config__algorithm__validate_regions
   type:
     items:
-    - File
     - 'null'
+    - string
     type: array
 - id: config__algorithm__variant_regions
   type:

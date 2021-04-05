@@ -3,57 +3,39 @@ $namespaces:
 arguments:
 - position: 0
   valueFrom: sentinel_runtime=cores,$(runtime['cores']),ram,$(runtime['ram'])
-- sentinel_parallel=single-split
-- sentinel_outputs=process_alignment_rec:files;config__algorithm__quality_format;align_split
-- sentinel_inputs=alignment_rec:record
+- sentinel_parallel=single-merge
+- sentinel_outputs=align_bam,work_bam_plus__disc,work_bam_plus__sr,hla__fastq
+- sentinel_inputs=alignment_rec:record,work_bam:var,align_bam:var,work_bam_plus__disc:var,work_bam_plus__sr:var,hla__fastq:var
 - run_number=0
 baseCommand:
 - bcbio_nextgen.py
 - runfn
-- prep_align_inputs
+- merge_split_alignments
 - cwl
 class: CommandLineTool
 cwlVersion: v1.0
 hints:
 - class: DockerRequirement
-  dockerImageId: leechuck/bcbio-vc
-  dockerPull: leechuck/bcbio-vc
+  dockerImageId: quay.io/bcbio/bcbio-vc
+  dockerPull: quay.io/bcbio/bcbio-vc
 - class: ResourceRequirement
-  coresMin: 4
-  outdirMin: 166927
-  ramMin: 16384
-  tmpdirMin: 78344
+  coresMin: 8
+  outdirMin: 375843
+  ramMin: 65536
+  tmpdirMin: 182802
 - class: dx:InputResourceRequirement
   indirMin: 107572
 - class: SoftwareRequirement
   packages:
-  - package: grabix
-    specs:
-    - https://anaconda.org/bioconda/grabix
-  - package: htslib
-    specs:
-    - https://anaconda.org/bioconda/htslib
   - package: biobambam
     specs:
     - https://anaconda.org/bioconda/biobambam
-  - package: atropos;env
+  - package: samtools
     specs:
-    - https://anaconda.org/bioconda/atropos;env
-    version:
-    - python3
-  - package: optitype;env
+    - https://anaconda.org/bioconda/samtools
+  - package: variantbam
     specs:
-    - https://anaconda.org/bioconda/optitype;env
-    version:
-    - python2
-  - package: razers3
-    specs:
-    - https://anaconda.org/bioconda/razers3
-    version:
-    - 3.5.0
-  - package: coincbc
-    specs:
-    - https://anaconda.org/bioconda/coincbc
+    - https://anaconda.org/bioconda/variantbam
 inputs:
 - id: alignment_rec
   type:
@@ -118,26 +100,68 @@ inputs:
       type: File
     name: alignment_rec
     type: record
-outputs:
-- id: process_alignment_rec
+- id: work_bam
+  secondaryFiles:
+  - .bai
   type:
     items:
-      fields:
-      - name: files
-        type:
-        - 'null'
-        - items: File
-          type: array
-      - name: config__algorithm__quality_format
-        type:
-        - string
-        - 'null'
-      - name: align_split
-        type:
-        - string
-        - 'null'
-      name: process_alignment_rec
-      type: record
+    - File
+    - 'null'
+    type: array
+- id: align_bam_toolinput
+  secondaryFiles:
+  - .bai
+  type:
+    items:
+    - File
+    - 'null'
+    type: array
+- id: work_bam_plus__disc_toolinput
+  secondaryFiles:
+  - .bai
+  type:
+    items:
+    - File
+    - 'null'
+    type: array
+- id: work_bam_plus__sr_toolinput
+  secondaryFiles:
+  - .bai
+  type:
+    items:
+    - File
+    - 'null'
+    type: array
+- id: hla__fastq_toolinput
+  type:
+    items:
+    - 'null'
+    - items: File
+      type: array
+    type: array
+outputs:
+- id: align_bam
+  secondaryFiles:
+  - .bai
+  type:
+  - File
+  - 'null'
+- id: work_bam_plus__disc
+  secondaryFiles:
+  - .bai
+  type:
+  - File
+  - 'null'
+- id: work_bam_plus__sr
+  secondaryFiles:
+  - .bai
+  type:
+  - File
+  - 'null'
+- id: hla__fastq
+  type:
+  - 'null'
+  - items: File
     type: array
 requirements:
 - class: InlineJavascriptRequirement

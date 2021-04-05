@@ -4,122 +4,40 @@ $namespaces:
 arguments:
 - position: 0
   valueFrom: sentinel_runtime=cores,$(runtime['cores']),ram,$(runtime['ram'])
-- sentinel_parallel=batch-parallel
-- sentinel_outputs=vrn_file_region,region_block
-- sentinel_inputs=batch_rec:record,region_block:var
+- sentinel_parallel=batch-merge
+- sentinel_outputs=vrn_file
+- sentinel_inputs=batch_rec:record,region_block:var,vrn_file_region:var
 - run_number=0
 baseCommand:
 - bcbio_nextgen.py
 - runfn
-- variantcall_batch_region
+- concat_batch_variantcalls
 - cwl
 class: CommandLineTool
 cwlVersion: v1.0
 hints:
 - class: DockerRequirement
-  dockerImageId: leechuck/bcbio-vc
-  dockerPull: leechuck/bcbio-vc
+  dockerImageId: quay.io/bcbio/bcbio-vc
+  dockerPull: quay.io/bcbio/bcbio-vc
 - class: ResourceRequirement
-  coresMin: 8
-  outdirMin: 219156
-  ramMin: 65536
-  tmpdirMin: 104458
+  coresMin: 1
+  outdirMin: 166927
+  ramMin: 4096
+  tmpdirMin: 78344
 - class: dx:InputResourceRequirement
-  indirMin: 30209
+  indirMin: 30097
 - class: SoftwareRequirement
   packages:
   - package: bcftools
     specs:
     - https://anaconda.org/bioconda/bcftools
-  - package: bedtools
-    specs:
-    - https://anaconda.org/bioconda/bedtools
-  - package: freebayes
-    specs:
-    - https://anaconda.org/bioconda/freebayes
-    version:
-    - 1.1.0.46
-  - package: gatk4
-    specs:
-    - https://anaconda.org/bioconda/gatk4
-  - package: vqsr_cnn
-    specs:
-    - https://anaconda.org/bioconda/vqsr_cnn
-  - package: deepvariant;env
-    specs:
-    - https://anaconda.org/bioconda/deepvariant;env
-    version:
-    - dv
-  - package: sentieon;env
-    specs:
-    - https://anaconda.org/bioconda/sentieon;env
-    version:
-    - python2
   - package: htslib
     specs:
     - https://anaconda.org/bioconda/htslib
-  - package: octopus
+  - package: gatk4
     specs:
-    - https://anaconda.org/bioconda/octopus
-  - package: picard
-    specs:
-    - https://anaconda.org/bioconda/picard
-  - package: platypus-variant;env
-    specs:
-    - https://anaconda.org/bioconda/platypus-variant;env
-    version:
-    - python2
-  - package: pythonpy
-    specs:
-    - https://anaconda.org/bioconda/pythonpy
-  - package: samtools
-    specs:
-    - https://anaconda.org/bioconda/samtools
-  - package: pysam>
-    specs:
-    - https://anaconda.org/bioconda/pysam>
-    version:
-    - 0.13.0
-  - package: strelka;env
-    specs:
-    - https://anaconda.org/bioconda/strelka;env
-    version:
-    - python2
-  - package: vardict
-    specs:
-    - https://anaconda.org/bioconda/vardict
-  - package: vardict-java
-    specs:
-    - https://anaconda.org/bioconda/vardict-java
-  - package: varscan
-    specs:
-    - https://anaconda.org/bioconda/varscan
-  - package: moreutils
-    specs:
-    - https://anaconda.org/bioconda/moreutils
-  - package: vcfanno
-    specs:
-    - https://anaconda.org/bioconda/vcfanno
-  - package: vcflib
-    specs:
-    - https://anaconda.org/bioconda/vcflib
-  - package: vt
-    specs:
-    - https://anaconda.org/bioconda/vt
-  - package: r
-    specs:
-    - https://anaconda.org/bioconda/r
-    version:
-    - 3.5.1
-  - package: r-base
-    specs:
-    - https://anaconda.org/bioconda/r-base
-  - package: perl
-    specs:
-    - https://anaconda.org/bioconda/perl
+    - https://anaconda.org/bioconda/gatk4
 - class: arv:APIRequirement
-- class: arv:RuntimeConstraints
-  keep_cache: 4096
 inputs:
 - id: batch_rec
   type:
@@ -162,12 +80,12 @@ inputs:
           type: array
       - name: config__algorithm__validate
         type:
-        - File
         - 'null'
+        - string
       - name: config__algorithm__validate_regions
         type:
-        - File
         - 'null'
+        - string
       - name: config__algorithm__variant_regions
         type:
         - File
@@ -254,21 +172,25 @@ inputs:
       name: batch_rec
       type: record
     type: array
-- id: region_block_toolinput
+- id: region_block
   type:
-    items: string
+    items:
+      items: string
+      type: array
     type: array
-outputs:
 - id: vrn_file_region
   secondaryFiles:
   - .tbi
   type:
-  - File
-  - 'null'
-- id: region_block
-  type:
-    items: string
+    items:
+    - File
+    - 'null'
     type: array
+outputs:
+- id: vrn_file
+  secondaryFiles:
+  - .tbi
+  type: File
 requirements:
 - class: InlineJavascriptRequirement
 - class: InitialWorkDirRequirement
