@@ -17,8 +17,8 @@ class: CommandLineTool
 cwlVersion: v1.0
 hints:
 - class: DockerRequirement
-  dockerImageId: quay.io/bcbio/bcbio-vc
-  dockerPull: quay.io/bcbio/bcbio-vc
+  dockerImageId: leechuck/bcbio-vc
+  dockerPull: leechuck/bcbio-vc
 - class: ResourceRequirement
   coresMin: 4
   outdirMin: 323614
